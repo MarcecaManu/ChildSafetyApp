@@ -20,7 +20,7 @@ The **Child Safety Monitoring System** is an IoT-based application designed to e
   - Intuitive mobile/web app for live monitoring and notifications.
 
 ---
-
+hello
 ## Hardware Components
 
 - **Raspberry Pi** (Core Processing Unit)
