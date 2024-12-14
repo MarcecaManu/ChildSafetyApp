@@ -19,6 +19,9 @@ def getCurrentStatus():
     else:
         print("No motion detected.")
 
+
+
+
 while True:
-    getCurrentStatus()
+    # getCurrentStatus()
     time.sleep(0.001)  # Reduce CPU usage, but still allow data to be updated

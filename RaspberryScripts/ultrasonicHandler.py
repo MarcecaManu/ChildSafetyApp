@@ -37,10 +37,15 @@ class UltrasonicSensorHandler:
         self.higher_sensor.threshold_distance = self.door_highersize - 0.1
 
         # Start the monitoring thread
-        thread = Thread(target=self.monitor_sensors)
+        thread = Thread(target=self.monitor_sensor_low)
         thread.daemon = True  # The thread will exit when the main program exits
         thread.start()
-        self.monitor_sensors()
+
+        # Start the monitoring thread
+        thread = Thread(target=self.monitor_sensor_high)
+        thread.daemon = True  # The thread will exit when the main program exits
+        thread.start()
+        #self.monitor_sensors()
 
 
     # Measure the distance three times and check for a stable door size to set.
@@ -76,7 +81,7 @@ class UltrasonicSensorHandler:
                 
 
 
-    def monitor_sensors(self):
+    def monitor_sensor_low(self):
         while True:
             self.lower_sensor.wait_for_in_range()
             self.lower_detected = True
@@ -99,8 +104,35 @@ class UltrasonicSensorHandler:
             # print(f"Sensor 3: {self.distances['actuator_sensor']:.2f} cm")
             # print("-" * 20)
             time.sleep(1)
-            self.higher_sensor.wait_for_out_of_range()
+            self.lower_sensor.wait_for_out_of_range()
             print("Lower sensor - No motion detected")
+            self.lower_detected = False
+
+    def monitor_sensor_high(self):
+        while True:
+            self.higher_sensor.wait_for_in_range()
+            self.higher_detected = True
+            print("Higher sensor - Motion detected!")
+
+
+            # # Update the distance readings
+            # self.distances["lower_sensor"] = self.lower_sensor.distance * 100  # Convert to cm
+            # self.distances["higher_sensor"] = self.higher_sensor.distance * 100
+
+            # self.distances["actuator_sensor"] = self.actuator_sensor.distance * 100
+
+            # self.lower_detected = self.distances["lower_sensor"] < self.door_lowersize - self.tolerance
+            # self.higher_detected = self.distances["higher_sensor"] < self.door_highersize - self.tolerance
+                
+
+            # # Print the distances for debugging
+            # print(f"Sensor 1: {self.distances['lower_sensor']:.2f} cm")
+            # print(f"Sensor 2: {self.distances['higher_sensor']:.2f} cm")
+            # print(f"Sensor 3: {self.distances['actuator_sensor']:.2f} cm")
+            # print("-" * 20)
+            time.sleep(1)
+            self.higher_sensor.wait_for_out_of_range()
+            print("Higher sensor - No motion detected")
             self.higher_detected = False
 
 
