@@ -1,5 +1,4 @@
 # ultrasonic_handler.py
-import sys
 from gpiozero import DistanceSensor
 from threading import Thread
 import time
@@ -34,8 +33,8 @@ class UltrasonicSensorHandler:
             self.calibrate_sensors()
         print("Calibration complete. Door size is " + str(self.door_lowersize))
 
-        self.lower_sensor.threshold_distance = self.door_lowersize - 0.1
-        self.higher_sensor.threshold_distance = self.door_highersize - 0.1
+        self.lower_sensor.threshold_distance = self.door_lowersize - 0.05
+        self.higher_sensor.threshold_distance = self.door_highersize - 0.05
 
         # Start the monitoring thread
         thread = Thread(target=self.monitor_sensor_low)
@@ -142,6 +141,7 @@ class UltrasonicSensorHandler:
             self.higher_detected = False
 
     def monitor_sensor_actuator(self):
+        time.sleep(3)
         while True:
             self.actuator_sensor.wait_for_in_range()
             self.actuator_detected = True
