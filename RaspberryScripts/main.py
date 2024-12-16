@@ -154,7 +154,7 @@ class Main:
                 
                 #debug
                 actuator_handler.actuator_is_on = True
-                print("Turning actuator back ON...")
+                print(str(self.timeslot_actuator_off) + "s have passed. Turning actuator back ON...")
         else: 
             self.notification_sent = False
             self.updateTimestampChild()
