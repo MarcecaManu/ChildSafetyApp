@@ -1,5 +1,5 @@
 import time
-from PIR_Handler import pir_handler
+from motionHandler import pir_handler
 from ultrasonicHandler import ultrasonic_handler
 from actuatorHandler import actuator_handler
 

@@ -2,7 +2,7 @@ from gpiozero import MotionSensor, LED
 from threading import Thread
 import time
 
-class PIRSensorHandler:
+class MotionSensorHandler:
     def __init__(self, pir_pin, led_pin):
         self.pir = MotionSensor(pir_pin)
         self.led = LED(led_pin)
@@ -28,7 +28,7 @@ class PIRSensorHandler:
             time.sleep(2)
 
 # Create an instance of the handler with PIR on GPIO 18 and LED on GPIO 12
-pir_handler = PIRSensorHandler(pir_pin=18, led_pin=12)
+pir_handler = MotionSensorHandler(pir_pin=18, led_pin=12)
 
 # # Keep the script running to allow motion detection to work
 # try:
