@@ -138,23 +138,24 @@ class Main:
             
             # Check for anything close to the actuator sensor and disable it eventually
             if actuator_handler.actuator_is_on and ultrasonic_handler.actuator_detected:            #Implement PIRSensor as well
-                # actuator_handler.turnOffActuator()
+                actuator_handler.turnOffActuator()
                 self.updateTimestampActuator()
 
                 # Check for response
 
 
                 #debug 
-                actuator_handler.actuator_is_on = False
                 print("A child alone in the room has got close to a plug. Turning it OFF...")
-            elif not actuator_handler.actuator_is_on and time.time() - self.timestamp_actuator > self.timeslot_actuator_off:
-
-                # NOTE!! Reenable the plug when an adult comes in?
-                # actuator_handler.turnOnActuator()
                 
-                #debug
-                actuator_handler.actuator_is_on = True
-                print(str(self.timeslot_actuator_off) + "s have passed. Turning actuator back ON...")
+        elif not actuator_handler.actuator_is_on and  not (not self.adult_in_room and self.child_in_room) and time.time() - self.timestamp_actuator > self.timeslot_actuator_off:
+
+            #debug
+            print(str(self.timeslot_actuator_off) + "s have passed. Turning actuator back ON...")
+
+            # NOTE!! Reenable the plug when an adult comes in?
+            actuator_handler.turnOnActuator()
+                
+                
         else: 
             self.notification_sent = False
             self.updateTimestampChild()

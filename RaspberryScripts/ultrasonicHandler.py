@@ -166,7 +166,7 @@ class UltrasonicSensorHandler:
             time.sleep(1)
             self.actuator_sensor.wait_for_out_of_range()
             # print("Higher sensor - No motion detected")
-            self.actuators_detected = False
+            self.actuator_detected = False
 
 
 
