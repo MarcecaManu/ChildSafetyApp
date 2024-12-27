@@ -2,7 +2,8 @@ import time
 import paho.mqtt.client as mqtt
 
 class MQTThandler:
-    def __init__(self, broker="tcp://broker.hivemq.com:1883", pub_topic="iotlab/notifications"):
+    def __init__(self, broker="tcp://broker.hivemq.com", port=1883, pub_topic="iotlab/notifications"):
+        self.port = port
         self.broker = broker
         self.pub_topic = pub_topic
         self.client = mqtt.Client()  # MQTT Client
@@ -17,6 +18,18 @@ class MQTThandler:
         print("Attempting to connect to broker " + self.broker)
         self.client.connect(self.broker)  # Broker address
         self.client.loop_start()  # Start the loop to handle MQTT callbacks
+
+    def connect_to_broker(self):
+        """Attempt to connect to the MQTT broker with retries."""
+        while True:
+            try:
+                print(f"Attempting to connect to broker {self.broker}:{self.port}")
+                self.client.connect(self.broker, self.port, keepalive=60)
+                self.client.loop_start()  # Start the loop to handle MQTT callbacks
+                break  # Exit loop if connection is successful
+            except Exception as e:
+                print(f"Connection failed: {e}. Retrying in 5 seconds...")
+                time.sleep(5)
 
     def on_connect(self, client, userdata, flags, rc):
         """Callback for when the client connects to the broker."""

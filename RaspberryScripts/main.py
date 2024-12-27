@@ -2,6 +2,7 @@ import time
 from motionHandler import pir_handler
 from ultrasonicHandler import ultrasonic_handler
 from actuatorHandler import actuator_handler
+from mqttHandler import mqtt_handler
 
 class Main:
     # Class-level attributes for better readability
@@ -32,6 +33,9 @@ class Main:
         self.timestamp_child_alone = time.time()
         self.timestamp_pir = time.time()
         self.timestamp_actuator = time.time()
+
+        # Initialize Mqtt Handler
+        self.mqtt_handler = MQTThandler()
 
     def updateTimestampDoor(self):
         self.timestamp_door = time.time()
@@ -131,7 +135,7 @@ class Main:
         if self.child_in_room and not self.adult_in_room:
             if not self.notification_sent and time.time() - self.timestamp_child_alone > self.timeslot_child_alone:
                 # Send notification
-                # [............]
+                self.mqtt_handler.send_notification("A child has been alone in the room for over 30 seconds.")
 
                 self.notification_sent = True 
                 print("A child has been alone for more than " + str(self.timeslot_child_alone) + "s. Sending notification...")
@@ -140,10 +144,9 @@ class Main:
             if actuator_handler.actuator_is_on and ultrasonic_handler.actuator_detected:            #Implement PIRSensor as well
                 actuator_handler.turnOffActuator()
                 self.updateTimestampActuator()
-
+                # Send notification
+                self.mqtt_handler.send_notification("An appliance has been disabled for safety.")
                 # Check for response
-
-
                 #debug 
                 print("A child alone in the room has got close to a plug. Turning it OFF...")
                 
@@ -154,7 +157,7 @@ class Main:
 
             # NOTE!! Reenable the plug when an adult comes in?
             actuator_handler.turnOnActuator()
-                
+            print("Actuator re-enabled.")
                 
         else: 
             self.notification_sent = False

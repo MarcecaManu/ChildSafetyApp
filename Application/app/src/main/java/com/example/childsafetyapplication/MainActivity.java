@@ -29,9 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String CHANNEL_ID = "child_safety_channel";
 
-
-
-    private void connect(){
+    private void connect() {
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(this.getApplicationContext(), SERVER_URI, clientId);
         try {
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onSuccess");
                     System.out.println(TAG + " Success. Connected to " + SERVER_URI);
                 }
+
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     System.out.println("Subscription successful to topic: " + topic);
                 }
+
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     System.out.println("Failed to subscribe to topic: " + topic);
@@ -93,16 +93,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendNotification(String message){
+    private void sendNotification(String message) {
 
         final String notification_title = "CHILD SAFETY";
         final String notification_text = "A child has been alone for more than one minute in the room!";
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification)
-                .setContentTitle(notification_title)
-                .setContentText(notification_text)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setContentTitle("CHILD SAFETY ALERT")
+                .setContentText(message) // Use the incoming message
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true); // Dismiss the notification when clicked
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.notify(1, builder.build());
     }
 
     @Override
@@ -131,13 +135,14 @@ public class MainActivity extends AppCompatActivity {
                     subscribe("iot/notifications");
                 }
             }
+
             @Override
             public void connectionLost(Throwable cause) {
                 System.out.println("The Connection was lost.");
             }
+
             @Override
-            public void messageArrived(String topic, MqttMessage message) throws
-                    Exception {
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String newMessage = new String(message.getPayload());
                 System.out.println("Incoming message: " + newMessage);
 
@@ -148,13 +153,12 @@ public class MainActivity extends AppCompatActivity {
                 // Send notification!
                 sendNotification(newMessage);
 
-
             }
+
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
             }
         });
     }
-
 
 }
