@@ -2,7 +2,7 @@ import time
 import paho.mqtt.client as mqtt
 
 class MQTThandler:
-    def __init__(self, broker="broker.hivemq.com", port=1883, pub_topic="iotlab/notifications"):
+    def __init__(self, broker="broker.hivemq.com", port=1883, pub_topic="iot/notifications"):
         self.port = port
         self.broker = broker
         self.pub_topic = pub_topic
