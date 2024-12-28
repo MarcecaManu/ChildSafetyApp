@@ -34,8 +34,8 @@ class Main:
         self.timestamp_pir = time.time()
         self.timestamp_actuator = time.time()
 
-        # Initialize Mqtt Handler
-        self.mqtt_handler = MQTThandler()
+        # # Initialize Mqtt Handler
+        # self.mqtt_handler = MQTThandler()
 
     def updateTimestampDoor(self):
         self.timestamp_door = time.time()
@@ -135,7 +135,7 @@ class Main:
         if self.child_in_room and not self.adult_in_room:
             if not self.notification_sent and time.time() - self.timestamp_child_alone > self.timeslot_child_alone:
                 # Send notification
-                self.mqtt_handler.send_notification("A child has been alone in the room for over 30 seconds.")
+                mqtt_handler.send_notification("A child has been alone in the room for over 30 seconds.")
 
                 self.notification_sent = True 
                 print("A child has been alone for more than " + str(self.timeslot_child_alone) + "s. Sending notification...")

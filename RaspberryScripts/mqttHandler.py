@@ -2,7 +2,7 @@ import time
 import paho.mqtt.client as mqtt
 
 class MQTThandler:
-    def __init__(self, broker="tcp://broker.hivemq.com", port=1883, pub_topic="iotlab/notifications"):
+    def __init__(self, broker="broker.hivemq.com", port=1883, pub_topic="iotlab/notifications"):
         self.port = port
         self.broker = broker
         self.pub_topic = pub_topic
@@ -60,10 +60,5 @@ class MQTThandler:
         print(f"Notification sent: {message}")
 
 
-if __name__ == "__main__":
-    mqtt_handler = MQTThandler()  # Initialize MQTT handler
 
-    while True:
-        message = "Test Notification"
-        mqtt_handler.send_notification(message)  # Send notification
-        time.sleep(2.0)  # Set delay
+mqtt_handler = MQTThandler()  # Initialize MQTT handler
