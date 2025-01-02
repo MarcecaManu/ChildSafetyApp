@@ -95,12 +95,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendNotification(String message) {
 
-        final String notification_title = "CHILD SAFETY";
-        final String notification_text = "A child has been alone for more than one minute in the room!";
+        final String notification_title = "CHILD SAFETY ALERT";
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification)
-                .setContentTitle("CHILD SAFETY ALERT")
+                .setContentTitle(notification_title)
                 .setContentText(message) // Use the incoming message
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true); // Dismiss the notification when clicked

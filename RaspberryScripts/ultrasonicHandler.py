@@ -77,6 +77,9 @@ class UltrasonicSensorHandler:
                 self.distances["lower_sensor"] = self.lower_sensor.distance   
                 measures_lower.append(self.distances["lower_sensor"])
 
+                # Small delay to avoid interference
+                time.sleep(0.1)
+                
                 self.distances["higher_sensor"] = self.higher_sensor.distance 
                 measures_higher.append(self.distances["higher_sensor"])
 
@@ -94,8 +97,8 @@ class UltrasonicSensorHandler:
                 print("Unable to calibrate door sensors: keep the door area free. Retrying...")
             else:
                 self.calibrated = True
-                self.door_lowersize = measures_lower[2]
-                self.door_highersize = measures_higher[2]
+                self.door_lowersize = sum(measures_lower) / len(measures_lower)
+                self.door_highersize = sum(measures_higher) / len(measures_higher)
                 
 
 
