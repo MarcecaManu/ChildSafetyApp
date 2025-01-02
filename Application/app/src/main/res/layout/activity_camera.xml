@@ -20,7 +20,7 @@
             android:layout_height="match_parent" />
         <ImageView
             android:id="@+id/myImageView"
-            android:src="@mipmap/ic_launcher"
+            android:src="@android:drawable/ic_menu_camera"
             android:layout_weight="0.9"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -37,5 +37,13 @@
     <WebView
         android:id="@+id/myWebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+
+    <!-- Go Back Button -->
+    <Button
+        android:id="@+id/goBackButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_margin="16dp"/>
 </LinearLayout>
