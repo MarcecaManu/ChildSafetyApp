@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".CameraActivity">
 
+    <!-- Top Bar with ProgressBar and ImageView -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -16,18 +17,25 @@
             android:layout_weight="0.1"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
         <ImageView
             android:id="@+id/myImageView"
             android:src="@mipmap/ic_launcher"
             android:layout_weight="0.9"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
+    <!-- VideoView for displaying the video feed -->
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- WebView for additional content -->
     <WebView
         android:id="@+id/myWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 </LinearLayout>
