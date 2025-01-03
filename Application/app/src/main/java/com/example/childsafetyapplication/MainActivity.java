@@ -127,12 +127,15 @@ public class MainActivity extends AppCompatActivity {
         db.deleteExpiredNotifications();
 
         Button openCameraButton = findViewById(R.id.btn_open_camera);
-        openCameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                startActivity(intent);
-            }
+        openCameraButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+
+        Button viewNotificationsButton = findViewById(R.id.btn_notifications);
+        viewNotificationsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, NotificationsActivity.class);
+            startActivity(intent);
         });
 
         createNotificationChannel();
@@ -161,16 +164,12 @@ public class MainActivity extends AppCompatActivity {
                 String newMessage = new String(message.getPayload());
                 System.out.println("Incoming message: " + newMessage);
 
-                /*
-                 * DO SOMETHING WITH newMessage HERE!
-                 */
-
-                // Send notification!
+                // Send notification
                 sendNotification(newMessage);
 
+                // Save to database
                 Notification notification = new Notification(
                         newMessage, DBHelper.getCurrentTimestamp(), false);
-
                 db.addNotification(notification);
             }
 

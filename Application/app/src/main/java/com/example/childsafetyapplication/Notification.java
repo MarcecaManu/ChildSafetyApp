@@ -4,6 +4,8 @@ package com.example.childsafetyapplication;
  * Represents a notification entry in the database.
  */
 public class Notification {
+
+    private int id;
     private String message;
     private String timestamp;
     private boolean disclosed;
@@ -16,9 +18,24 @@ public class Notification {
      * @param disclosed Whether the notification has been disclosed (true/false).
      */
     public Notification(String message, String timestamp, boolean disclosed) {
+        this.id = -1;
         this.message = message;
         this.timestamp = timestamp;
         this.disclosed = disclosed;
+    }
+
+    public Notification(int id, String message, String timestamp, boolean disclosed){
+        this.id = id;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.disclosed = disclosed;
+    }
+
+    /**
+     * @return The notification id.
+     */
+    public int getId() {
+        return id;
     }
 
     /**

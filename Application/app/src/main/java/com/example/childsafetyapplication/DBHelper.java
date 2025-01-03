@@ -2,11 +2,13 @@ package com.example.childsafetyapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -130,5 +132,39 @@ public class DBHelper extends SQLiteOpenHelper {
         // Delete notifications older than 24 hours
         db.delete(NOTIFICATIONS_TABLE, NOTIF_TIMESTAMP + " < ?", new String[]{twentyFourHoursAgo});
         db.close();
+    }
+
+    public ArrayList<Notification> getNotifications(){
+        ArrayList<Notification> notifications = new ArrayList<Notification>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query =
+                "select * from " + NOTIFICATIONS_TABLE + " ORDER BY " + NOTIF_TIMESTAMP + " DESC";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int idIndex = cursor.getColumnIndex(NOTIF_ID);
+        int messageIndex = cursor.getColumnIndex(NOTIF_MESSAGE);
+        int timestampIndex = cursor.getColumnIndex(NOTIF_TIMESTAMP);
+        int disclosedIndex = cursor.getColumnIndex(NOTIF_DISCLOSED);
+
+        if(cursor.moveToFirst()) {
+            do {
+
+                Notification notification =  new Notification(
+                        cursor.getInt(idIndex),
+                        cursor.getString(messageIndex),
+                        cursor.getString(timestampIndex),
+                        cursor.getInt(disclosedIndex)==1
+                );
+
+                notifications.add(notification);
+
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        return notifications;
     }
 }
