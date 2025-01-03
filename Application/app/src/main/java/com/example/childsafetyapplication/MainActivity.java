@@ -122,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Instantiate DBHelper and delete older notifications
+        DBHelper db = new DBHelper(this);
+        db.deleteExpiredNotifications();
+
         Button openCameraButton = findViewById(R.id.btn_open_camera);
         openCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 // Send notification!
                 sendNotification(newMessage);
 
+                Notification notification = new Notification(
+                        newMessage, DBHelper.getCurrentTimestamp(), false);
+
+                db.addNotification(notification);
             }
 
             @Override
