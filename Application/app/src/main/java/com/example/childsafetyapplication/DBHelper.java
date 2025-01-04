@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +37,11 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, "NotificationsDB", null, 1);
     }
 
+    /**
+     * Get the current timestamp in a human-readable format
+     *
+     * @return Timestamp in a human-readable format
+     */
     public static String getCurrentTimestamp(){
         // Get the current time in milliseconds
         long currentTimeMillis = System.currentTimeMillis();
@@ -134,6 +138,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Retrieves all notifications in an ArrayList sorted by timestamp (newest to oldest).
+     *
+     * @return ArrayList of notification, sorted by newest.
+     */
     public ArrayList<Notification> getNotifications(){
         ArrayList<Notification> notifications = new ArrayList<Notification>();
 

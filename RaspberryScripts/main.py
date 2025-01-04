@@ -12,7 +12,7 @@ class Main:
     OCCUPIED_CHILD = "OCCUPIED_CHILD"  # Child detected passing through the door
     OCCUPIED_ADULT = "OCCUPIED_ADULT"  # Adult detected passing through the door
 
-    timeslot_child_alone = 15    # 1 minute
+    timeslot_child_alone = 60    # 1 minute
     timeslot_actuator_off = 10
     notification_sent = False
 
@@ -22,7 +22,7 @@ class Main:
 
         # Timeslot values (in seconds)
         self.timeslot_both_sensors = 0.5
-        self.timeslot_pir = 10
+        self.timeslot_pir = 30
 
         # Statuses
         self.previous_status = self.FREE
@@ -135,7 +135,7 @@ class Main:
         if self.child_in_room and not self.adult_in_room:
             if not self.notification_sent and time.time() - self.timestamp_child_alone > self.timeslot_child_alone:
                 # Send notification
-                mqtt_handler.send_notification("A child has been alone in the room for over 1 minute!")
+                mqtt_handler.send_notification("A child has been alone in the room for over " + str(self.timeslot_child_alone) + " seconds!")
 
                 self.notification_sent = True 
                 print("A child has been alone for more than " + str(self.timeslot_child_alone) + "s. Sending notification...")

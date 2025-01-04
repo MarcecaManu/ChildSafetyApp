@@ -24,6 +24,14 @@ public class Notification {
         this.disclosed = disclosed;
     }
 
+    /**
+     * Constructs an already existing Notification object (it's possible to specify the id).
+     *
+     * @param id        The unique id of the notification.
+     * @param message   The message content of the notification.
+     * @param timestamp The timestamp of when the notification was created.
+     * @param disclosed Whether the notification has been disclosed (true/false).
+     */
     public Notification(int id, String message, String timestamp, boolean disclosed){
         this.id = id;
         this.message = message;
