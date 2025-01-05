@@ -2,6 +2,7 @@ package com.example.childsafetyapplication;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,13 @@ public class NotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
+
+        // Initialize the Go Back button
+        ImageButton goBackButton = findViewById(R.id.backArrow);
+        goBackButton.setOnClickListener(v -> {
+            // Finish the activity to return to the previous screen
+            finish();
+        });
 
         dbHelper = new DBHelper(this); // Initialize the database helper
         recyclerView = findViewById(R.id.recyclerViewNotifications); // Initialize the RecyclerView

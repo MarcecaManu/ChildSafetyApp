@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
+import android.widget.ViewSwitcher;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String SERVER_URI = "tcp://broker.hivemq.com:1883"; // MQTT broker URI
     private static final String TAG = "MainActivity"; // Logging tag
     private static final String CHANNEL_ID = "child_safety_channel"; // Notification channel ID
+
+    private ImageSwitcher imageSwitcher;
+
 
     /**
      * Connects to the MQTT broker.
@@ -145,6 +151,24 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        imageSwitcher = findViewById(R.id.img_switcher);
+
+        // Set the factory for creating ImageView for the ImageSwitcher
+        imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                ImageView imageView = new ImageView(getApplicationContext());
+                imageView.setLayoutParams(new ImageSwitcher.LayoutParams(
+                        ImageSwitcher.LayoutParams.MATCH_PARENT,
+                        ImageSwitcher.LayoutParams.MATCH_PARENT
+                ));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                return imageView;
+            }
+        });
+        updateImage(false);
+
+
         // Initialize the database and clean up expired notifications
         DBHelper db = new DBHelper(this);
         db.deleteExpiredNotifications();
@@ -178,11 +202,14 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("Connected to: " + serverURI);
                     subscribe("iot/notifications");
                 }
+
+                updateImage(true);
             }
 
             @Override
             public void connectionLost(Throwable cause) {
                 System.out.println("The connection was lost.");
+                updateImage(false);
             }
 
             @Override
@@ -203,5 +230,13 @@ public class MainActivity extends AppCompatActivity {
             public void deliveryComplete(IMqttDeliveryToken token) {
             }
         });
+    }
+
+    private void updateImage(boolean isConnected) {
+        if (isConnected) {
+            imageSwitcher.setImageResource(R.drawable.yes_connection);
+        } else {
+            imageSwitcher.setImageResource(R.drawable.no_connection);
+        }
     }
 }

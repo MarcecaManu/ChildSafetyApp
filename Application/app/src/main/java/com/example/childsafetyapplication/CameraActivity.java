@@ -10,6 +10,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -51,7 +52,7 @@ public class CameraActivity extends AppCompatActivity {
         superWebView = findViewById(R.id.myWebView);
 
         // Initialize the Go Back button
-        Button goBackButton = findViewById(R.id.goBackButton);
+        ImageButton goBackButton = findViewById(R.id.backArrow);
         goBackButton.setOnClickListener(v -> {
             // Finish the activity to return to the previous screen
             finish();
@@ -121,11 +122,17 @@ public class CameraActivity extends AppCompatActivity {
     private void showError() {
         // Stop loading the page and display an error message
         superWebView.stopLoading();
-        String errorHtml = "<html><body style='text-align:center; font-size:20px; color:red;'><h1>Couldn't connect to camera</h1><p>Please check your connection or try again later.</p></body></html>";
+        //String errorHtml = "<html><body style='text-align:center; font-size:20px; color:red;'><h1>Couldn't connect to camera</h1><p>Please check your connection or try again later.</p></body></html>";
+        String errorHtml = "<html>\n" +
+                "  <body style=\"text-align:center; font-size:20px; color:red;\">\n" +
+                "    <h1>Couldn't connect to camera</h1>\n" +
+                "    <p style=\"font-size:38px;\">Please check your connection or try again later.</p>\n" +
+                "  </body>\n" +
+                "</html>";
         superWebView.loadData(errorHtml, "text/html", "UTF-8");
 
         // Show a toast message for immediate feedback
-        Toast.makeText(this, "Failed to connect to the camera", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Failed to connect to the camera", Toast.LENGTH_LONG).show();
     }
 
     /**

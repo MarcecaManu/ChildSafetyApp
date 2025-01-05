@@ -2,12 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
+    <!-- Toolbar with Back Arrow -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:minHeight="?attr/actionBarSize">
+
+        <!-- Back Arrow Icon -->
+        <ImageButton
+            android:id="@+id/backArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Go Back"
+            android:padding="8dp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- RecyclerView for Notifications -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNotifications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:scrollbars="vertical" />
+
 </LinearLayout>

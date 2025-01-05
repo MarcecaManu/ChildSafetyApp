@@ -7,6 +7,26 @@
     android:orientation="vertical"
     tools:context=".CameraActivity">
 
+    <!-- Toolbar with Back Arrow -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:minHeight="?attr/actionBarSize">
+
+        <!-- Back Arrow Icon -->
+        <ImageButton
+            android:id="@+id/backArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Go Back"
+            android:padding="8dp" />
+    </androidx.appcompat.widget.Toolbar>
+
     <!-- Top Bar with ProgressBar and ImageView -->
     <LinearLayout
         android:orientation="horizontal"
@@ -39,11 +59,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- Go Back Button -->
-    <Button
-        android:id="@+id/goBackButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_margin="16dp"/>
 </LinearLayout>
