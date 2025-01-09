@@ -2,6 +2,7 @@ import time
 from motionHandler import pir_handler
 from ultrasonicHandler import ultrasonic_handler
 from actuatorHandler import actuator_handler
+from mqttHandler import mqtt_handler
 
 class Main:
     # Class-level attributes for better readability
@@ -64,7 +65,7 @@ class Main:
                 self.door_status = self.CHECK_HIGH
                 self.updateTimestampDoor()
             elif ultrasonic_handler.direction_detected:
-                self.door_status = self.CHECK_DIRECTION
+                self.entering = True
                 self.updateTimestampDirection()
 
         if self.door_status in [self.CHECK_LOW, self.CHECK_HIGH]:
@@ -72,14 +73,12 @@ class Main:
             if self.entering == None:
                 self.entering = False
             self.updateTimestampDirection()
-        elif self.door_status == self.CHECK_DIRECTION:
-            if self.entering == None:
-                self.entering = True
-            self.updateTimestampDirection()
 
         if self.door_status in [self.OCCUPIED_CHILD, self.OCCUPIED_ADULT]:
             if not ultrasonic_handler.lower_detected and not ultrasonic_handler.higher_detected:
                 self.door_status = self.FREE
+                
+
 
         # Debugging output
         if self.previous_status != self.door_status:
@@ -132,6 +131,10 @@ class Main:
                 #     print("An adult is in the room")
                 # else:
                 #     print("No adults in this room")
+            elif self.previous_status == self.FREE:
+                if self.entering != None and time.time() - self.timestamp_direction > self.timeslot_door_sensors:
+                    self.entering = None
+
 
 
         if self.adults_in_room > 0 or self.children_in_room > 0:
@@ -141,29 +144,36 @@ class Main:
                 # No motion detected for a bit. Assume the room is empty
                 print("No motion detected for " + str(self.timeslot_pir) + "s. Assuming the room is empty.")
                 self.adults_in_room = 0
-                self.child_in_room = 0
+                self.children_in_room = 0
                 
 
         
         if current_status_adult > self.adults_in_room:
             print("An adult has left the room")
+            self.printStatus()
         elif current_status_adult < self.adults_in_room:
             print("An adult has entered the room")
+            self.printStatus()
         
         if current_status_child > self.children_in_room:
             print("A child has left the room")
+            self.printStatus()
+
         elif current_status_child < self.children_in_room:
             print("A child has entered the room")
-
-        print("Adults: " + str(self.adults_in_room) + " | Children: " + self.children_in_room)
-
+            self.printStatus()
+        
         self.previous_status = self.door_status
+
+    def printStatus(self):
+        print("Adults: " + str(self.adults_in_room) + " | Children: " + str(self.children_in_room))
+
 
     def actuate(self):
         if self.childrenAlone():
             if not self.notification_sent and time.time() - self.timestamp_child_alone > self.timeslot_child_alone:
                 # Send notification
-                # [............]
+                mqtt_handler.send_notification("A child has been alone in the room for over " + str(self.timeslot_child_alone) + " seconds!")
 
                 self.notification_sent = True 
                 print("A child has been alone for more than " + str(self.timeslot_child_alone) + "s. Sending notification...")
@@ -173,7 +183,8 @@ class Main:
                 actuator_handler.turnOffActuator()
                 self.updateTimestampActuator()
 
-                # Check for response
+               # Send notification
+                mqtt_handler.send_notification("An appliance has been disabled for safety.")
 
 
                 #debug 
@@ -186,8 +197,8 @@ class Main:
 
             # NOTE!! Reenable the plug when an adult comes in?
             actuator_handler.turnOnActuator()
-                
-                
+            print("Actuator re-enabled.")
+
         else: 
             self.notification_sent = False
             self.updateTimestampChild()

@@ -30,7 +30,7 @@ public class CameraActivity extends AppCompatActivity {
     WebView superWebView;
 
     // Constants
-    private static final String CAMERA_URL = "http://192.168.11.8:8000"; // Camera feed URL
+    private static final String CAMERA_URL = "http://childsafety4iot.ddns.net:8080"; // Camera feed URL
     private static final int TIMEOUT_MS = 10000; // Timeout duration in milliseconds
     private boolean isPageLoaded = false; // Tracks whether the page has successfully loaded
 

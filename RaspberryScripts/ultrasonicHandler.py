@@ -42,6 +42,9 @@ class UltrasonicSensorHandler:
 
         self.lower_sensor.threshold_distance = self.door_lowersize - 0.05
         self.higher_sensor.threshold_distance = self.door_highersize - 0.05
+        
+        if self.ENABLE_DIRECTION_SENSOR:
+            self.direction_sensor.threshold_distance = self.door_direction_size - 0.05
 
         # Start the lower sensor monitoring thread
         thread = Thread(target=self.monitor_sensor_low)
@@ -59,10 +62,12 @@ class UltrasonicSensorHandler:
             thread.daemon = True  # The thread will exit when the main program exits
             thread.start()
 
+# NOTE UNCOMMENT!!!!!!!!!!!!!!
+
         # Start the monitoring thread
-        thread = Thread(target=self.monitor_sensor_actuator)
-        thread.daemon = True  # The thread will exit when the main program exits
-        thread.start()
+        # thread = Thread(target=self.monitor_sensor_actuator)
+        # thread.daemon = True  # The thread will exit when the main program exits
+        # thread.start()
         #self.monitor_sensors()
 
 
@@ -71,6 +76,9 @@ class UltrasonicSensorHandler:
             
             measures_lower = []
             measures_higher = []
+            
+            if self.ENABLE_DIRECTION_SENSOR:
+                measures_direction = []
 
             for i in range(3):
                 # Update the distance readings
@@ -83,7 +91,15 @@ class UltrasonicSensorHandler:
                 self.distances["higher_sensor"] = self.higher_sensor.distance 
                 measures_higher.append(self.distances["higher_sensor"])
 
+                if self.ENABLE_DIRECTION_SENSOR:
+                    time.sleep(0.1)
+
+                    self.distances["direction_sensor"] = self.direction_sensor.distance 
+                    measures_direction.append(self.distances["direction_sensor"])
+
                 time.sleep(1)
+
+
 
             mean = sum(measures_lower) / len(measures_lower)   # mean
             var  = sum(pow(x-mean,2) for x in measures_lower) / len(measures_lower)  # variance
@@ -93,12 +109,20 @@ class UltrasonicSensorHandler:
             var  = sum(pow(x-mean,2) for x in measures_higher) / len(measures_higher)  # variance
             std_higher  = math.sqrt(var)  # standard deviation
 
-            if std_lower > 2 or std_higher > 2:
+            if self.ENABLE_DIRECTION_SENSOR:
+                mean = sum(measures_higher) / len(measures_higher)   # mean
+                var  = sum(pow(x-mean,2) for x in measures_higher) / len(measures_higher)  # variance
+                std_direction  = math.sqrt(var)  # standard deviation
+
+
+            if std_lower > 2 or std_higher > 2 or (self.ENABLE_DIRECTION_SENSOR and std_direction > 2):
                 print("Unable to calibrate door sensors: keep the door area free. Retrying...")
             else:
                 self.calibrated = True
                 self.door_lowersize = sum(measures_lower) / len(measures_lower)
                 self.door_highersize = sum(measures_higher) / len(measures_higher)
+                if self.ENABLE_DIRECTION_SENSOR:
+                    self.door_direction_size = sum(measures_direction) / len(measures_direction)
                 
 
 
@@ -154,4 +178,13 @@ ultrasonic_handler = UltrasonicSensorHandler(
     pin1=(27, 17),  # Echo and Trigger pins for sensor 1
     pin2=(23, 22),  # Echo and Trigger pins for sensor 2
     pin3=(25, 24)   # Echo and Trigger pins for sensor 3
+    # pin4=(??,??)    # Echo and Trigger pins for direction sensor
 )
+
+# Create an instance of the handler (used to test the direction sensor, and ignoring the the actuator sensor)
+# ultrasonic_handler = UltrasonicSensorHandler(
+#     pin1=(27, 17),  # Echo and Trigger pins for Lower Sensor
+#     pin2=(23, 22),  # Echo and Trigger pins for Higher Sensor
+#     pin3=(5, 7),   # Random pins
+#     pin4=(25,24)    # Echo and Trigger pins for direction sensor
+# )
