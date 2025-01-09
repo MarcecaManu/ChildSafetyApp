@@ -65,9 +65,22 @@ public class CameraActivity extends AppCompatActivity {
         superWebView.getSettings().setUseWideViewPort(true);
         superWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         superWebView.setScrollbarFadingEnabled(true);
+        // Disable unnecessary WebView features
+        superWebView.getSettings().setAllowFileAccess(false);
+        superWebView.getSettings().setAllowFileAccessFromFileURLs(false);
+        superWebView.getSettings().setAllowUniversalAccessFromFileURLs(false);
 
         // Set WebViewClient to handle loading and errors
         superWebView.setWebViewClient(new WebViewClient() {
+            // Restrict the WebView to load only HTTPS URLs and the trusted camera URL
+            /*@Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (url.startsWith("https://") && url.equals(CAMERA_URL)) {
+                    return false; // Allow only HTTPS and the specific camera URL
+                }
+                return true; // Block other URLs
+            }*/
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -147,4 +160,7 @@ public class CameraActivity extends AppCompatActivity {
             finish();
         }
     }
+
+
+
 }

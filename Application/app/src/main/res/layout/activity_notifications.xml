@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:minHeight="?attr/actionBarSize"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:minHeight="?attr/actionBarSize">
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         <!-- Back Arrow Icon -->
         <ImageButton
@@ -20,9 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/ic_arrow_back"
             android:contentDescription="Go Back"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back" />
     </androidx.appcompat.widget.Toolbar>
 
     <!-- RecyclerView for Notifications -->
