@@ -174,6 +174,8 @@ class UltrasonicSensorHandler:
 
 
 # Create an instance of the handler
+# NOTE UNCOMMENT THIS IF ONLY 3 SENSORS ARE AVAILABLE, AND BE SURE TO CHECK THE PINS
+
 ultrasonic_handler = UltrasonicSensorHandler(
     pin1=(27, 17),  # Echo and Trigger pins for sensor 1
     pin2=(23, 22),  # Echo and Trigger pins for sensor 2
@@ -181,7 +183,10 @@ ultrasonic_handler = UltrasonicSensorHandler(
     # pin4=(??,??)    # Echo and Trigger pins for direction sensor
 )
 
+
 # Create an instance of the handler (used to test the direction sensor, and ignoring the the actuator sensor)
+# NOTE UNCOMMENT THIS IF 4 SENSORS ARE AVAILABLE, AND BE SURE TO CHECK THE PINS
+
 # ultrasonic_handler = UltrasonicSensorHandler(
 #     pin1=(27, 17),  # Echo and Trigger pins for Lower Sensor
 #     pin2=(23, 22),  # Echo and Trigger pins for Higher Sensor

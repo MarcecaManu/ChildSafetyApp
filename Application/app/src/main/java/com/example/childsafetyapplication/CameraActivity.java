@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -85,6 +86,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 isPageLoaded = true; // Page loaded successfully
+                superProgressBar.setVisibility(View.GONE); // Hide the progress bar
             }
 
             @Override

@@ -13,7 +13,7 @@ class Main:
     OCCUPIED_CHILD = "OCCUPIED_CHILD"   # Child detected passing through the door
     OCCUPIED_ADULT = "OCCUPIED_ADULT"   # Adult detected passing through the door
 
-    timeslot_child_alone = 15    # 1 minute
+    timeslot_child_alone = 60    # 1 minute
     timeslot_actuator_off = 10
     notification_sent = False
 
@@ -25,7 +25,7 @@ class Main:
 
         # Timeslot values (in seconds)
         self.timeslot_door_sensors = 0.5
-        self.timeslot_pir = 10
+        self.timeslot_pir = 30
 
         # Statuses
         self.previous_status = self.FREE
