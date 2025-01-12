@@ -29,10 +29,10 @@ This project implements an IoT-based child safety monitoring system using sensor
     ```bash
     pip install -r requirements.txt
     ```
-3. Configure the pins in the `main.py` and `main_w_direction.py` files to match your hardware setup.
+3. Configure the pins in the `motionHandler.py` and `ultrasonicHandler.py` files to match your hardware setup.
 
 ### Configuration
-- Verify the GPIO pins assigned for the sensors and actuators in the `main.py` and `main_w_direction.py` scripts.
+- Verify the GPIO pins assigned for the sensors in the `motionHandler.py` and `ultrasonicHandler.py` scripts.
 - If using the camera module, ensure it is enabled in the Raspberry Pi settings and configure port forwarding for remote access.
 
 ## Running the Application
