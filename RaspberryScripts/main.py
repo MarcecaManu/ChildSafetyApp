@@ -7,36 +7,36 @@ from mqttHandler import mqtt_handler
 class Main:
     # Class-level attributes for better readability
     FREE = "FREE"                    # No one's at the door
-    CHECK_LOW = "CHECK_LOW"          # LOWER sensor has been triggered, waiting for the other sensor
-    CHECK_HIGH = "CHECK_HIGH"        # HIGHER sensor has been triggered, waiting for the other sensor
+    CHECK_LOW = "CHECK_LOW"          # Lower sensor has been triggered, waiting for the other sensor
+    CHECK_HIGH = "CHECK_HIGH"        # Higher sensor has been triggered, waiting for the other sensor
     OCCUPIED_CHILD = "OCCUPIED_CHILD"  # Child detected passing through the door
     OCCUPIED_ADULT = "OCCUPIED_ADULT"  # Adult detected passing through the door
 
-    timeslot_child_alone = 60    # 1 minute
-    timeslot_actuator_off = 10
-    notification_sent = False
+    # Threshold values (in seconds)
+    timeslot_child_alone = 60       # Time after which a notification is sent if a child is alone
+    timeslot_actuator_off = 10      # Time before re-enabling the actuator
+    notification_sent = False       # Flag to indicate if a notification was already sent
 
     def __init__(self):
+        # Initialize room occupancy flags
         self.child_in_room = False
         self.adult_in_room = False
 
-        # Timeslot values (in seconds)
-        self.timeslot_both_sensors = 0.5
-        self.timeslot_pir = 30
+        # Sensor and motion detection timeouts
+        self.timeslot_both_sensors = 0.5  # Time to detect both sensors triggered
+        self.timeslot_pir = 30           # Timeout for detecting motion in the room
 
-        # Statuses
+        # Status variables
         self.previous_status = self.FREE
         self.door_status = self.FREE
 
-        # Timestamps
+        # Timestamps for tracking events
         self.timestamp_door = time.time()
         self.timestamp_child_alone = time.time()
         self.timestamp_pir = time.time()
         self.timestamp_actuator = time.time()
 
-        # # Initialize Mqtt Handler
-        # self.mqtt_handler = MQTThandler()
-
+    # Helper functions to update timestamps
     def updateTimestampDoor(self):
         self.timestamp_door = time.time()
 
@@ -49,8 +49,10 @@ class Main:
     def updateTimestampActuator(self):
         self.timestamp_actuator = time.time()
 
+    # Determine the current door status based on sensor inputs
     def getCurrentStatusDoor(self):
         if self.door_status == self.FREE:
+            # Check if either sensor is triggered
             if ultrasonic_handler.lower_detected:
                 self.door_status = self.CHECK_LOW
                 self.updateTimestampDoor()
@@ -59,115 +61,101 @@ class Main:
                 self.updateTimestampDoor()
 
         if self.door_status in [self.CHECK_LOW, self.CHECK_HIGH]:
+            # Check if both sensors are triggered within the threshold
             if time.time() - self.timestamp_door < self.timeslot_both_sensors:
                 if self.door_status == self.CHECK_LOW and ultrasonic_handler.higher_detected:
                     self.door_status = self.OCCUPIED_ADULT
                 elif self.door_status == self.CHECK_HIGH and ultrasonic_handler.lower_detected:
                     self.door_status = self.OCCUPIED_ADULT
             else:
+                # If the higher sensor triggered first, assume no detection
                 if self.door_status == self.CHECK_HIGH:
                     self.door_status = self.FREE
                 else:
                     self.door_status = self.OCCUPIED_CHILD
 
+        # Reset door status if neither sensor is active
         if self.door_status in [self.OCCUPIED_CHILD, self.OCCUPIED_ADULT]:
             if not ultrasonic_handler.lower_detected and not ultrasonic_handler.higher_detected:
                 self.door_status = self.FREE
 
-        # Debugging output
+        # Log status change for debugging
         if self.previous_status != self.door_status:
             print(self.door_status)
-            
 
-
+    # Determine the current room occupancy status
     def getCurrentStatusRoom(self):
-
         current_status_child = self.child_in_room
         current_status_adult = self.adult_in_room
 
-        
+        # Update room occupancy based on the door status
         if self.door_status == self.FREE:
             if self.previous_status == self.OCCUPIED_CHILD:
                 self.child_in_room = not self.child_in_room
                 self.updateTimestampPir()
-                # if self.child_in_room:
-                #     print("A child is in the room")
-                # else:
-                #     print("No children in this room")
             elif self.previous_status == self.OCCUPIED_ADULT:
                 self.adult_in_room = not self.adult_in_room
                 self.updateTimestampPir()
-                # if self.adult_in_room:
-                #     print("An adult is in the room")
-                # else:
-                #     print("No adults in this room")
 
-
+        # Handle motion detection in the room
         if self.adult_in_room or self.child_in_room:
             if pir_handler.motion_detected:
                 self.updateTimestampPir()
             elif time.time() - self.timestamp_pir > self.timeslot_pir:
-                # No motion detected for a bit. Assume the room is empty
-                print("No motion detected for " + str(self.timeslot_pir) + "s. Assuming the room is empty.")
+                # No motion detected for the timeout duration
+                print(f"No motion detected for {self.timeslot_pir}s. Assuming the room is empty.")
                 self.adult_in_room = False
                 self.child_in_room = False
-                
 
-        
+        # Log changes in room occupancy
         if current_status_adult != self.adult_in_room:
             if self.adult_in_room:
                 print("An adult is in the room")
             else:
                 print("No adults in this room")
-        
+
         if current_status_child != self.child_in_room:
             if self.child_in_room:
                 print("A child is in the room")
                 if not self.adult_in_room:
                     print("Child is alone!")
-                    self.updateTimestampChild()                    
+                    self.updateTimestampChild()
             else:
                 print("No children in this room")
 
+        # Update previous door status for tracking changes
         self.previous_status = self.door_status
 
+    # Actuator control logic based on room occupancy
     def actuate(self):
         if self.child_in_room and not self.adult_in_room:
+            # Send notification if the child is alone for too long
             if not self.notification_sent and time.time() - self.timestamp_child_alone > self.timeslot_child_alone:
-                # Send notification
-                mqtt_handler.send_notification("A child has been alone in the room for over " + str(self.timeslot_child_alone) + " seconds!")
+                mqtt_handler.send_notification(f"A child has been alone in the room for over {self.timeslot_child_alone} seconds!")
+                self.notification_sent = True
+                print(f"A child has been alone for more than {self.timeslot_child_alone}s. Sending notification...")
 
-                self.notification_sent = True 
-                print("A child has been alone for more than " + str(self.timeslot_child_alone) + "s. Sending notification...")
-            
-            # Check for anything close to the actuator sensor and disable it eventually
-            if actuator_handler.actuator_is_on and ultrasonic_handler.actuator_detected:            #Implement PIRSensor as well
+            # Turn off actuator if the child is near it
+            if actuator_handler.actuator_is_on and ultrasonic_handler.actuator_detected:
                 actuator_handler.turnOffActuator()
                 self.updateTimestampActuator()
-                # Send notification
                 mqtt_handler.send_notification("An appliance has been disabled for safety.")
-                # Check for response
-                #debug 
                 print("A child alone in the room has got close to a plug. Turning it OFF...")
-                
-        elif not actuator_handler.actuator_is_on and  not (not self.adult_in_room and self.child_in_room) and time.time() - self.timestamp_actuator > self.timeslot_actuator_off:
-
-            #debug
-            print(str(self.timeslot_actuator_off) + "s have passed. Turning actuator back ON...")
-
-            # NOTE!! Reenable the plug when an adult comes in?
+        elif not actuator_handler.actuator_is_on and not (not self.adult_in_room and self.child_in_room) and time.time() - self.timestamp_actuator > self.timeslot_actuator_off:
+            # Re-enable the actuator if conditions are safe
+            print(f"{self.timeslot_actuator_off}s have passed. Turning actuator back ON...")
             actuator_handler.turnOnActuator()
             print("Actuator re-enabled.")
-                
-        else: 
+        else:
+            # Reset notification flag when conditions are met
             self.notification_sent = False
             self.updateTimestampChild()
-
 
 
 # Create an instance of the Main class
 main_instance = Main()
 
+# Main loop to continuously monitor and handle room events
 while True:
     main_instance.getCurrentStatusDoor()
     main_instance.getCurrentStatusRoom()

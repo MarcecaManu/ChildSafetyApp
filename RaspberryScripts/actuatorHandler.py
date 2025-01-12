@@ -7,7 +7,7 @@ class ActuatorHandler:
     actuator_is_on = False
 
     def __init__(self):
-        # This is where to insert your generated API keys (http://api.telldus.com/keys)
+        # Generated API keys (http://api.telldus.com/keys)
         self.pubkey = "FEHUVEW84RAFR5SP22RABURUPHAFRUNU" # Public Key
         self.privkey = "ZUXEVEGA9USTAZEWRETHAQUBUR69U6EF" # Private Key
         self.token = "630aa0c040be82a447a000d123c032690676d7e05" # Token

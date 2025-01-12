@@ -29,10 +29,3 @@ class MotionSensorHandler:
 
 # Create an instance of the handler with PIR on GPIO 18 and LED on GPIO 12
 pir_handler = MotionSensorHandler(pir_pin=18, led_pin=12)
-
-# # Keep the script running to allow motion detection to work
-# try:
-#     while True:
-#         time.sleep(1)
-# except KeyboardInterrupt:
-#     print("Program stopped.")
