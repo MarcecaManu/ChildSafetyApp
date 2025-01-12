@@ -56,19 +56,20 @@ class UltrasonicSensorHandler:
         thread.daemon = True  # The thread will exit when the main program exits
         thread.start()
 
+        # Start the monitoring thread
+        thread = Thread(target=self.monitor_sensor_actuator)
+        thread.daemon = True  # The thread will exit when the main program exits
+        thread.start()
+
         # Start the direction sensor monitoring thread (if available)
         if self.ENABLE_DIRECTION_SENSOR:
             thread = Thread(target=self.monitor_sensor_direction)
             thread.daemon = True  # The thread will exit when the main program exits
             thread.start()
 
-# NOTE UNCOMMENT!!!!!!!!!!!!!!
 
-        # Start the monitoring thread
-        # thread = Thread(target=self.monitor_sensor_actuator)
-        # thread.daemon = True  # The thread will exit when the main program exits
-        # thread.start()
-        #self.monitor_sensors()
+
+        
 
 
     # Measure the distance three times and check for a stable door size to set.
@@ -177,10 +178,10 @@ class UltrasonicSensorHandler:
 # NOTE UNCOMMENT THIS IF ONLY 3 SENSORS ARE AVAILABLE, AND BE SURE TO CHECK THE PINS
 
 ultrasonic_handler = UltrasonicSensorHandler(
-    pin1=(27, 17),  # Echo and Trigger pins for sensor 1
-    pin2=(23, 22),  # Echo and Trigger pins for sensor 2
-    pin3=(25, 24)   # Echo and Trigger pins for sensor 3
-    # pin4=(??,??)    # Echo and Trigger pins for direction sensor
+    pin1=(27, 17),  # Echo and Trigger pins for Lower Sensor
+    pin2=(23, 22),  # Echo and Trigger pins for Higher Sensor
+    pin3=(6, 5)   # Echo and Trigger pins for Actuator Sensor
+    # pin4=(??,??)    # Echo and Trigger pins for Direction Sensor
 )
 
 
@@ -190,6 +191,6 @@ ultrasonic_handler = UltrasonicSensorHandler(
 # ultrasonic_handler = UltrasonicSensorHandler(
 #     pin1=(27, 17),  # Echo and Trigger pins for Lower Sensor
 #     pin2=(23, 22),  # Echo and Trigger pins for Higher Sensor
-#     pin3=(5, 7),   # Random pins
-#     pin4=(25,24)    # Echo and Trigger pins for direction sensor
+#     pin3=(4, 16),   # Random unused pins
+#     pin4=(6, 5)    # Echo and Trigger pins for direction sensor
 # )

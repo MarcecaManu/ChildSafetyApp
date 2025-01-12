@@ -139,6 +139,17 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Deletes all disclosed notifications.
+     */
+    public void deleteDisclosedNotifications() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Delete notifications older than 24 hours
+        db.delete(NOTIFICATIONS_TABLE, NOTIF_DISCLOSED + " = 1", null);
+        db.close();
+    }
+
+    /**
      * Retrieves all notifications in an ArrayList sorted by timestamp (newest to oldest).
      *
      * @return ArrayList of notification, sorted by newest.

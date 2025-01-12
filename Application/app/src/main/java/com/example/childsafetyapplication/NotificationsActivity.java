@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 /**
@@ -38,6 +40,15 @@ public class NotificationsActivity extends AppCompatActivity {
         goBackButton.setOnClickListener(v -> {
             // Finish the activity to return to the previous screen
             finish();
+        });
+
+        // Initialize Delete button
+        FloatingActionButton deleteButton = findViewById(R.id.btn_delete);
+        deleteButton.setOnClickListener(v -> {
+            // Delete disclosed notifications
+            dbHelper.deleteDisclosedNotifications();
+            Toast.makeText(this, "Disclosed notifications were deleted successfully", Toast.LENGTH_LONG).show();
+            loadNotifications(); // Refresh notifications
         });
 
         dbHelper = new DBHelper(this); // Initialize the database helper
